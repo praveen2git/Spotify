@@ -21,7 +21,7 @@ async def spotify_to_mp3(url: str = Query(..., description="Spotify URL to conve
         # Step 2: Convert track to MP3
         convert_url = f"https://api.fabdl.com/spotify/mp3-convert-task/{gid}/{track_id}"
         convert_data = send_request(convert_url)
-
+        print(convert_data)
         if "result" not in convert_data or "download_url" not in convert_data["result"]:
             raise HTTPException(status_code=500, detail="Failed to convert track to MP3.")
 

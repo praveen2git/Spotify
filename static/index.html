@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leo Spotify Downloader</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header>
+        <h1>Spotify Downloader</h1>
+        <p>Search, Listen, and Download your favorite tracks in high quality.</p>
+    </header>
+
+    <main>
+        <section class="input-section">
+            <div class="tabs">
+                <button class="tab-btn active" id="search-tab">Search Song</button>
+                <button class="tab-btn" id="dl-tab">Paste URL</button>
+            </div>
+
+            <!-- Search Form -->
+            <div class="input-group" id="search-form">
+                <input type="text" id="search-input" placeholder="Enter song name or artist...">
+                <button class="action-btn" id="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+
+            <!-- Direct Download Form (Hidden by default) -->
+            <div class="input-group" id="dl-form" style="display: none;">
+                <input type="text" id="dl-input" placeholder="Paste Spotify Track URL...">
+                <button class="action-btn" id="dl-btn">
+                    <i class="fas fa-download"></i>
+                </button>
+            </div>
+        </section>
+
+        <section class="results-section">
+            <div class="results-grid" id="results-area">
+                <!-- Results will be injected here via JS -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Built with ❤️ by <a href="https://t.me/Itzzmeleo" target="_blank">Leo</a></p>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
