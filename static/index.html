@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leo Spotify Downloader</title>
     <link rel="stylesheet" href="/static/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
+
 <body>
 
     <header>
@@ -19,6 +22,7 @@
             <div class="tabs">
                 <button class="tab-btn active" id="search-tab">Search Song</button>
                 <button class="tab-btn" id="dl-tab">Paste URL</button>
+                <button class="tab-btn" id="live-tab">Live TV Stream</button>
             </div>
 
             <!-- Search Form -->
@@ -36,19 +40,68 @@
                     <i class="fas fa-download"></i>
                 </button>
             </div>
+
+            <!-- Live TV Controls (Hidden by default) -->
+            <div class="input-group" id="live-controls" style="display: none;">
+                <input type="text" id="channel-search" placeholder="Search Tamil channels...">
+            </div>
         </section>
 
         <section class="results-section">
+            <!-- Normal Results -->
             <div class="results-grid" id="results-area">
                 <!-- Results will be injected here via JS -->
             </div>
+
+            <!-- Live TV Section -->
+            <div id="live-section" style="display: none;">
+                <div class="video-container">
+                    <video id="live-video" controls autoplay></video>
+                    <div id="current-channel-info"
+                        style="margin-top: 10px; font-weight: bold; color: var(--text-primary);">Select a channel to
+                        play</div>
+                </div>
+                <div class="channel-list-container">
+                    <div id="channel-list" class="channel-grid"></div>
+                </div>
+            </div>
         </section>
-    </main>
+        <!-- Toast Container -->
+        <div id="toast-container" class="toast-container"></div>
 
-    <footer>
-        <p>Built with ❤️ by <a href="https://t.me/Itzzmeleo" target="_blank">Leo</a></p>
-    </footer>
 
-    <script src="/static/script.js"></script>
+        <!-- Floating Audio Player -->
+        <div id="audio-player" class="audio-player hidden">
+            <div class="player-info">
+                <img id="player-img" src="" alt="">
+                <div class="player-text">
+                    <h4 id="player-title">Song Title</h4>
+                    <p id="player-artist">Artist</p>
+                </div>
+            </div>
+
+            <div class="player-controls">
+                <button id="player-prev" class="control-btn"><i class="fas fa-step-backward"></i></button>
+                <button id="player-play" class="control-btn play">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button id="player-next" class="control-btn"><i class="fas fa-step-forward"></i></button>
+            </div>
+
+            <div class="player-progress">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" value="0" min="0" max="100">
+                <span id="duration">0:00</span>
+            </div>
+
+            <audio id="global-audio"></audio>
+        </div>
+
+        <footer>
+            <p>Built with ❤️ by <a href="https://t.me/Itzzmeleo" target="_blank">Leo Das</a></p>
+        </footer>
+
+        <script src="/static/script.js"></script>
 </body>
+
 </html>

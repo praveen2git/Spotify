@@ -33,7 +33,8 @@ async def song_to_download(name: str = Query(..., description="Song name to sear
         convert_data = send_request(convert_url)
 
         if "result" not in convert_data or "download_url" not in convert_data["result"]:
-            raise HTTPException(status_code=500, detail="Failed to convert track to MP3.")
+            print(f"DEBUG: FabDL Convert Failed. Response: {convert_data}")
+            raise HTTPException(status_code=500, detail=f"Failed to convert track. API Response: {convert_data}")
 
         # Return track details and download link
         response = {
