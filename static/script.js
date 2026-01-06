@@ -1,48 +1,54 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const searchTab = document.getElementById('search-tab');
-    const dlTab = document.getElementById('dl-tab');
+    // Navigation Switching
+    const navSearch = document.getElementById('nav-search');
+    const navDl = document.getElementById('nav-dl');
+    const navLive = document.getElementById('nav-live');
+
     const searchForm = document.getElementById('search-form');
     const dlForm = document.getElementById('dl-form');
-    const resultsArea = document.getElementById('results-area'); // Define resultsArea globally for tabs to access if needed
-
-    // Tab Switching
-    const liveTab = document.getElementById('live-tab');
     const liveControls = document.getElementById('live-controls');
+
+    // Global Results Areas
+    const resultsArea = document.getElementById('results-area');
     const liveSection = document.getElementById('live-section');
     const liveVideo = document.getElementById('live-video');
 
-    // Tab Switching Helper
-    function switchTab(activeTab) {
-        [searchTab, dlTab, liveTab].forEach(t => t.classList.remove('active'));
-        activeTab.classList.add('active');
+    function switchSection(activeNav) {
+        // Update Nav State
+        [navSearch, navDl, navLive].forEach(nav => nav.classList.remove('active'));
+        activeNav.classList.add('active');
 
-        // Hide all sections
+        // Hide All Content
         searchForm.style.display = 'none';
         dlForm.style.display = 'none';
         liveControls.style.display = 'none';
+
         resultsArea.style.display = 'none';
         liveSection.style.display = 'none';
 
-        // Pause Live Video if leaving tab
-        if (activeTab !== liveTab && !liveVideo.paused) {
+        // Stop Live Video if leaving
+        if (activeNav !== navLive && !liveVideo.paused) {
             liveVideo.pause();
         }
     }
 
-    searchTab.addEventListener('click', () => {
-        switchTab(searchTab);
+    navSearch.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchSection(navSearch);
         searchForm.style.display = 'flex';
         resultsArea.style.display = 'grid';
     });
 
-    dlTab.addEventListener('click', () => {
-        switchTab(dlTab);
+    navDl.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchSection(navDl);
         dlForm.style.display = 'flex';
         resultsArea.style.display = 'grid';
     });
 
-    liveTab.addEventListener('click', () => {
-        switchTab(liveTab);
+    navLive.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchSection(navLive);
         liveControls.style.display = 'flex';
         liveSection.style.display = 'flex';
         if (!tamilChannelsLoaded) {
@@ -372,6 +378,9 @@ async function loadTamilChannels() {
         const text = await response.text();
         allChannels = parseM3U(text);
 
+        // Populate Categories
+        populateCategories(allChannels);
+
         renderChannels(allChannels);
         tamilChannelsLoaded = true;
     } catch (error) {
@@ -404,6 +413,10 @@ function parseM3U(content) {
             const logoMatch = info.match(/tvg-logo="([^"]*)"/);
             currentChannel.logo = logoMatch ? logoMatch[1] : '';
 
+            // Extract Category (group-title)
+            const groupMatch = info.match(/group-title="([^"]*)"/);
+            currentChannel.category = groupMatch ? groupMatch[1] : 'Uncategorized';
+
         } else if (line.startsWith('http')) {
             currentChannel.url = line;
             if (currentChannel.name) {
@@ -413,6 +426,25 @@ function parseM3U(content) {
         }
     }
     return channels;
+}
+
+function populateCategories(channels) {
+    const categorySelect = document.getElementById('category-filter');
+    if (!categorySelect) return;
+
+    // Get unique categories
+    const categories = new Set(channels.map(ch => ch.category));
+    const sortedCategories = Array.from(categories).sort();
+
+    // Clear existing options except "All"
+    categorySelect.innerHTML = '<option value="all">All Categories</option>';
+
+    sortedCategories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        categorySelect.appendChild(option);
+    });
 }
 
 function renderChannels(channels) {
@@ -433,6 +465,7 @@ function renderChannels(channels) {
         card.innerHTML = `
             <img src="${logoSrc}" alt="${channel.name}" onerror="this.src='https://via.placeholder.com/60?text=TV'">
             <h4>${channel.name}</h4>
+            <p style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 5px;">${channel.category}</p>
         `;
 
         card.addEventListener('click', () => {
@@ -491,12 +524,27 @@ function playChannel(channel) {
     }
 }
 
-// Channel Search Filter
+// Channel Filters
 const channelSearch = document.getElementById('channel-search');
-if (channelSearch) {
-    channelSearch.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        const filtered = allChannels.filter(ch => ch.name.toLowerCase().includes(term));
-        renderChannels(filtered);
+const categoryFilter = document.getElementById('category-filter');
+
+function filterChannels() {
+    const searchTerm = channelSearch ? channelSearch.value.toLowerCase() : '';
+    const selectedCategory = categoryFilter ? categoryFilter.value : 'all';
+
+    const filtered = allChannels.filter(ch => {
+        const matchesName = ch.name.toLowerCase().includes(searchTerm);
+        const matchesCategory = selectedCategory === 'all' || ch.category === selectedCategory;
+        return matchesName && matchesCategory;
     });
+
+    renderChannels(filtered);
+}
+
+if (channelSearch) {
+    channelSearch.addEventListener('input', filterChannels);
+}
+
+if (categoryFilter) {
+    categoryFilter.addEventListener('change', filterChannels);
 }

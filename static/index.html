@@ -12,19 +12,18 @@
 
 <body>
 
-    <header>
-        <h1>Spotify Downloader</h1>
-        <p>Search, Listen, and Download your favorite tracks in high quality.</p>
-    </header>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">Leo Player</div>
+        <ul class="nav-links">
+            <li><a href="#" id="nav-search" class="active">Search Song</a></li>
+            <li><a href="#" id="nav-dl">Paste URL</a></li>
+            <li><a href="#" id="nav-live">Live TV</a></li>
+        </ul>
+    </nav>
 
     <main>
         <section class="input-section">
-            <div class="tabs">
-                <button class="tab-btn active" id="search-tab">Search Song</button>
-                <button class="tab-btn" id="dl-tab">Paste URL</button>
-                <button class="tab-btn" id="live-tab">Live TV Stream</button>
-            </div>
-
             <!-- Search Form -->
             <div class="input-group" id="search-form">
                 <input type="text" id="search-input" placeholder="Enter song name or artist...">
@@ -42,8 +41,11 @@
             </div>
 
             <!-- Live TV Controls (Hidden by default) -->
-            <div class="input-group" id="live-controls" style="display: none;">
+            <div class="input-group live-toolbar" id="live-controls" style="display: none;">
                 <input type="text" id="channel-search" placeholder="Search Tamil channels...">
+                <select id="category-filter" class="category-select">
+                    <option value="all">All Categories</option>
+                </select>
             </div>
         </section>
 
